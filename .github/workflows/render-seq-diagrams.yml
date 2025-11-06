@@ -30,19 +30,6 @@ jobs:
         if: ${{ steps.changes.outputs.changed != '' }}
         run: |
           echo ${{ steps.changes.outputs.changed }}
-          #for FILE in ${{ steps.changes.outputs.changed }}; do
-          #  BASENAME="${FILE%.txt}"
-          #  IMG="$BASENAME.png"
-          #  echo "Rendering $FILE -> $IMG"
-          #
-          #  curl -s -X POST \
-          #    -d "style=default" \
-          #    --data-urlencode "message=$(cat "$FILE")" \
-          #    https://www.websequencediagrams.com/index.php \
-          #  | sed 's/\([a-zA-Z0-9_]\+\)\s*:/\"\1\":/g' \
-          #  | jq -r '( "https://www.websequencediagrams.com/" + .img )' \
-          #  | xargs curl -s -o "$IMG"
-          #done
 
       - name: Update README.md image list
         run: |
@@ -53,8 +40,7 @@ jobs:
           sed -zi 's/<!-- diagrams:start -->.*\(<!-- diagrams:end -->\|$\)/<!-- diagrams:start -->\n<!-- diagrams:end -->/' README.md
 
           # Replace content between markers
-          sed -i -e '/<!-- diagrams:start -->/,/<!-- diagrams:end -->/{/<!-- diagrams:start -->/{p; r .diagrams.tmp
-        }; /<!-- diagrams:end -->/p; d}' README.md
+          sed -i -e '/<!-- diagrams:start -->/,/<!-- diagrams:end -->/{/<!-- diagrams:start -->/{p; r .diagrams.tmp }; /<!-- diagrams:end -->/p; d}' README.md
 
           rm .diagrams.tmp
 
