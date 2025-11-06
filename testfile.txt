@@ -1,4 +1,4 @@
-title Untitled in Github2
+title Untitled in Github
 
 Alice->Bob: Authentication Request
 note right of Bob: Bob thinks about it
