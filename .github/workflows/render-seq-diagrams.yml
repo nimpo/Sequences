@@ -37,7 +37,6 @@ jobs:
             BASENAME="${FILE%.txt}"
             IMG="$BASENAME.png"
             echo "Rendering $FILE -> $IMG"
-          
             curl -s -X POST \
               -d "style=default" \
               --data-urlencode "message=$(cat "$FILE")" \
@@ -49,11 +48,12 @@ jobs:
 
       - name: Update README.md image list
         run: |
+          DATE=`date -Iseconds`
           # Create image markdown list
           find . -name \*.png -printf "%f\n" |sed -e 's/^/![]\(/' -e 's/$/\)/' > .diagrams.tmp
-
+          
           #Clear Markers
-          sed -zi 's/<!-- diagrams:start -->.*\(<!-- diagrams:end -->\|$\)/<!-- diagrams:start -->\n<!-- diagrams:end -->/' README.md
+          sed -zi 's/<!-- diagrams:start -->.*\(<!-- diagrams:end -->\|$\)/<!-- diagrams:start -->\nLast updated '"$DATE"'\nUpdates may take upto 5 minutes to show in Github README.md\n<!-- diagrams:end -->/' README.md
 
           # Replace content between markers
           sed -i -e '/<!-- diagrams:start -->/,/<!-- diagrams:end -->/{/<!-- diagrams:start -->/{p; r .diagrams.tmp
