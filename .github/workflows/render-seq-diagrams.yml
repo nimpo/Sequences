@@ -40,7 +40,8 @@ jobs:
           sed -zi 's/<!-- diagrams:start -->.*\(<!-- diagrams:end -->\|$\)/<!-- diagrams:start -->\n<!-- diagrams:end -->/' README.md
 
           # Replace content between markers
-          #sed -i -e '/<!-- diagrams:start -->/,/<!-- diagrams:end -->/{/<!-- diagrams:start -->/{p; r .diagrams.tmp }; /<!-- diagrams:end -->/p; d}' README.md
+          sed -i -e '/<!-- diagrams:start -->/,/<!-- diagrams:end -->/{/<!-- diagrams:start -->/{p; r .diagrams.tmp
+                     }; /<!-- diagrams:end -->/p; d}' README.md
 
           rm .diagrams.tmp
 
