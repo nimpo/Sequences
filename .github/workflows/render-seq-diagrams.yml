@@ -25,9 +25,9 @@ jobs:
         id: changes
         run: |
           git fetch --depth=2 origin ${{ github.ref }}
-          CHANGED=$(git diff --name-only HEAD^ HEAD | grep '\.txt$' || true)
-          echo "changed=$CHANGED"
-          echo "changed=$CHANGED" >> $GITHUB_OUTPUT
+          echo "changed<<EOF" >> $GITHUB_OUTPUT
+          git diff --name-only HEAD^ HEAD | grep '\.txt$' >> $GITHUB_OUTPUT || echo "No sequence file changes"
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Render diagrams
         if: ${{ steps.changes.outputs.changed != '' }}
