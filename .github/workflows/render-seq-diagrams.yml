@@ -46,16 +46,10 @@ jobs:
       - name: Update README.md image list
         run: |
           # Create image markdown list
-          echo "" > .diagrams.tmp
-          for PNG in *.png */*.png 2>/dev/null; do
-            echo "![]($PNG)" >> .diagrams.tmp
-          done
+          find . -name \*.png -printf "%f\n" |sed -e 's/^/![]\(/' -e 's/$/\)/' > .diagrams.tmp
 
-          # Ensure markers exist
-          if ! grep -q "<!-- diagrams:start -->" README.md; then
-            echo '<!-- diagrams:start -->' >>README.md
-            echo '<!-- diagrams:end -->' >>README.md
-          fi
+          #Clear Markers
+          sed -zi 's/<!-- diagrams:start -->.*\(<!-- diagrams:end -->\|$\)/<!-- diagrams:start -->\n<!-- diagrams:end -->/' README.md
 
           # Replace content between markers
           sed -i -e '/<!-- diagrams:start -->/,/<!-- diagrams:end -->/{/<!-- diagrams:start -->/{p; r .diagrams.tmp
