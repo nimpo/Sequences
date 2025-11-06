@@ -29,9 +29,7 @@ jobs:
       - name: Render diagrams
         if: ${{ steps.changes.outputs.changed != '' }}
         run: |
-          for FILE in ${{ steps.changes.outputs.changed }}; do
-            echo $FILE
-          done
+          echo ${{ steps.changes.outputs.changed }}
           #for FILE in ${{ steps.changes.outputs.changed }}; do
           #  BASENAME="${FILE%.txt}"
           #  IMG="$BASENAME.png"
