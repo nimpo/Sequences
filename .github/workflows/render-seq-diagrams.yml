@@ -53,7 +53,7 @@ jobs:
           # Create image markdown list
           echo "Last updated $DATE  " > .diagrams.tmp
           echo "Updates may take up to 5 minutes to show in Github hosted README.md  " >> .diagrams.tmp
-          find . -name \*.png -printf "%f\n\n" |sed -e 's/^/![]\(/' -e 's/$/\)/' >> .diagrams.tmp
+          find . -name \*.png -printf "%P\n\n" |sed -e 's/^/![]\(/' -e 's/$/\)/' >> .diagrams.tmp
 
           #Clear Markers
           sed -zi 's/<!-- diagrams:start -->.*\(<!-- diagrams:end -->\|$\)/<!-- diagrams:start -->\n<!-- diagrams:end -->/' README.md
