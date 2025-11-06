@@ -1,0 +1,80 @@
+name: Render sequence diagrams
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl sed
+
+      - name: Determine changed .txt files
+        id: changes
+        run: |
+          git fetch --depth=2 origin ${{ github.ref }}
+          CHANGED=$(git diff --name-only HEAD^ HEAD | grep '\.txt$' || true)
+          echo "changed=$CHANGED"
+          echo "changed=$CHANGED" >> $GITHUB_OUTPUT
+
+      - name: Render diagrams
+        if: ${{ steps.changes.outputs.changed != '' }}
+        run: |
+          for FILE in ${{ steps.changes.outputs.changed }}; do
+            BASENAME="${FILE%.txt}"
+            IMG="$BASENAME.png"
+            echo "Rendering $FILE -> $IMG"
+
+            curl -s -X POST \
+              -d "style=default" \
+              --data-urlencode "message=$(cat "$FILE")" \
+              https://www.websequencediagrams.com/index.php \
+            | sed 's/\([a-zA-Z0-9_]\+\)\s*:/\"\1\":/g' \
+            | jq -r '( "https://www.websequencediagrams.com/" + .img )' \
+            | xargs curl -s -o "$IMG"
+          done
+
+      - name: Update README.md image list
+        run: |
+          # Create image markdown list
+          echo "" > .diagrams.tmp
+          for PNG in *.png */*.png 2>/dev/null; do
+            echo "![]($PNG)" >> .diagrams.tmp
+          done
+
+          # Ensure markers exist
+          if ! grep -q "<!-- diagrams:start -->" README.md; then
+            cat <<EOF >> README.md
+
+<!-- diagrams:start -->
+<!-- diagrams:end -->
+EOF
+          fi
+
+          # Replace content between markers
+          sed -i -e '/<!-- diagrams:start -->/,/<!-- diagrams:end -->/{/<!-- diagrams:start -->/{p; r .diagrams.tmp
+        }; /<!-- diagrams:end -->/p; d}' README.md
+
+          rm .diagrams.tmp
+
+      - name: Commit changes
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update diagrams & README"
+            git push
+          fi
+
