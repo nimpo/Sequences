@@ -33,6 +33,19 @@ jobs:
         if: ${{ steps.changes.outputs.changed != '' }}
         run: |
           echo ${{ steps.changes.outputs.changed }}
+          for FILE in ${{ steps.changes.outputs.changed }}; do
+            BASENAME="${FILE%.txt}"
+            IMG="$BASENAME.png"
+            echo "Rendering $FILE -> $IMG"
+          
+            curl -s -X POST \
+              -d "style=default" \
+              --data-urlencode "message=$(cat "$FILE")" \
+              https://www.websequencediagrams.com/index.php \
+            | sed 's/\([a-zA-Z0-9_]\+\)\s*:/\"\1\":/g' \
+            | jq -r '( "https://www.websequencediagrams.com/" + .img )' \
+            | xargs curl -s -o "$IMG"
+          done
 
       - name: Update README.md image list
         run: |
