@@ -1,4 +1,4 @@
-title Sequence Diagram á la Github
+title Sequence Diagram á la Github in a sub directory
 
 Alice->Bob: Authentication Request
 note right of Bob: Bob thinks about it
