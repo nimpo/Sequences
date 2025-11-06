@@ -32,7 +32,7 @@ jobs:
       - name: Render diagrams
         if: ${{ steps.changes.outputs.changed != '' }}
         run: |
-          for FILE in ${{ steps.changes.outputs.changed }}; do
+          while read FILE; do
             BASENAME="${FILE%.txt}"
             IMG="$BASENAME.png"
             echo "Rendering $FILE -> $IMG"
@@ -43,7 +43,9 @@ jobs:
             | sed 's/\([a-zA-Z0-9_]\+\)\s*:/\"\1\":/g' \
             | jq -r '( "https://www.websequencediagrams.com/" + .img )' \
             | xargs curl -s -o "$IMG"
-          done
+          done <<-EOF
+          ${{ steps.changes.outputs.changed }}
+          EOF
 
       - name: Update README.md image list
         run: |
