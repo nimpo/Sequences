@@ -1,5 +1,5 @@
 title Sequence Diagram á la Github
 
 Alice->Bob: Authentication Request
-note right of Bob: Bob thinks about it for a bit
+note right of Bob: Bob thinks about it for a bit!
 Bob->Alice: Authentication Response
