@@ -53,11 +53,8 @@ jobs:
 
           # Ensure markers exist
           if ! grep -q "<!-- diagrams:start -->" README.md; then
-            cat <<EOF >> README.md
-
-<!-- diagrams:start -->
-<!-- diagrams:end -->
-EOF
+            echo '<!-- diagrams:start -->' >>README.md
+            echo '<!-- diagrams:end -->' >>README.md
           fi
 
           # Replace content between markers
